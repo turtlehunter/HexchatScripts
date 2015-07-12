@@ -1,5 +1,5 @@
 __module_name__ = 'Name Colourer'
-__module_version__ = '0.5'
+__module_version__ = '0.9'
 __module_description__ = 'Colours names in chat messages using HexChat colouring'
 
 import hexchat
@@ -15,7 +15,7 @@ halt = False
 
 def colour_names(word, word_eol, event, attrs):
 	
-	global halt, name_start, name_other
+	global halt
 	
 	if halt:
 		return
@@ -24,9 +24,10 @@ def colour_names(word, word_eol, event, attrs):
 	message = word[1]
 	
 	for user in users:
-		if re.search(('(?!' + name_start + ')%s(?!=' + name_other + ')') % (user), message):
-			colour = get_colour(user)
-			message = re.sub(r'((?!' + name_start + '))(%s)((?!=' + name_other + '))' % (user),r'\1\\003' + colour + user + '\\003\3', message)
+		name = user.nick
+		if name_search(message, name):
+			colour = get_colour(name)
+			message = re.sub(r'((?!' + name_start + '))' + name + '((?!=' + name_other + '))',r'\1\003' + str(colour) + name + '\003\3', message)
 	word[1] = message
 	halt = True
 	hexchat.emit_print(event, *word)
@@ -37,17 +38,24 @@ def colour_names(word, word_eol, event, attrs):
 def get_colour(name):
 	
 	global colours
-	raw = raw_input(name)
+	raw = list(name)
 	total = 0
-	for ch in message:
+	for ch in raw:
 		total += ord(ch)
 	return colours[total % len(colours)]
+
+def name_search(text, name):
+	
+	global name_start, name_other
+	m = re.search(r'(?!' + name_start + ')' + name + '(?!=' + name_other + ')', text)
+	return m
 
 
 #events to colour text
 hooks = ["Your Message", "Channel Message", "Channel Msg Hilight", "Your Action", "Channel Action", "Channel Action Hilight"]
 
 for hook in hooks:
-	hexchat.hook_print_attrs(hook, colour_names, hexchat.PRI_HIGH)
+	hexchat.hook_print_attrs(hook, colour_names, hook, hexchat.PRI_HIGH)
 
 print("\00304" + __module_name__ + " successfully loaded.\003")
+
