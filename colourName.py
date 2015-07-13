@@ -1,5 +1,5 @@
 __module_name__ = 'Name Colourer'
-__module_version__ = '0.9'
+__module_version__ = '1.0'
 __module_description__ = 'Colours names in chat messages using HexChat colouring'
 
 import hexchat
@@ -27,7 +27,7 @@ def colour_names(word, word_eol, event, attrs):
 		name = user.nick
 		if name_search(message, name):
 			colour = get_colour(name)
-			message = re.sub(r'((?!' + name_start + '))' + name + '((?!=' + name_other + '))',r'\1\003' + str(colour) + name + '\003\3', message)
+			message = re.sub(r'(|(?!' + name_start + '))' + name + '(|(?!=' + name_other + '))',r'\1\003' + str(colour) + name + '\003\3', message)
 	word[1] = message
 	halt = True
 	hexchat.emit_print(event, *word)
