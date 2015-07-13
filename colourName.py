@@ -27,7 +27,7 @@ def colour_names(word, word_eol, event, attrs):
 		name = format_name(user.nick)
 		if name_search(message, name):
 			colour = get_colour(name)
-			message = re.sub(r'(?<![' + name_start + '])' + name + '(?![' + name_other + '])', '\003' + str(colour) + name + '\017', message)
+			message = re.sub(r'(?<![' + name_start + '])' + name + '(?![' + name_other + '])', '\003' + str(colour) + name + '\003', message)
 	word[1] = message
 	halt = True
 	hexchat.emit_print(event, *word)
