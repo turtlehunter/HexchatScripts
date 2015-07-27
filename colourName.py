@@ -52,7 +52,7 @@ def name_search(text, name):
 
 #format the name text to avoid regex errors
 def format_name(name):
-	return name.replace('\\','\\\\').replace('|','\|').replace('^','\^').replace('-','\-').replace('[','\[').replace(']','\]')
+	return name.replace('\\','\\\\').replace('|','\|').replace('^','\^').replace('[','\[').replace(']','\]')
 	
 
 #events to colour text
