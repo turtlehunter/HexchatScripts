@@ -11,3 +11,6 @@ A filter to remove `*.net *.split` part messages from chat, which can occur when
 
 ## Slack
 A script to improve the usability of [Slack](https://slack.com) communication via IRC. Currently only removes voice and devoice messages.
+
+## Colour Name
+A script that colours usernames within messages, following the standard HexChat colouring scheme. Regex is used for pattern matching, to avoid conflicts and collisions. This script is currently being tested, though no major issues seem to be present.
