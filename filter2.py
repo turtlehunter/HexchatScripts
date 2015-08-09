@@ -1,5 +1,5 @@
 __module_name__ = 'Filter2'
-__module_version__ = '2.7'
+__module_version__ = '2.8'
 __module_description__ = 'Filters join/part messages by hosts'
 
 import hexchat
@@ -41,11 +41,11 @@ def new_msg(word, word_eol, event, attrs):
 	for u in users:
 		if(u.nick == user):
 			host = u.host
-	
+
 	#user was logged in before script started
 	if host not in last_seen:
 		last_seen[host] = [time(), 1, user]
-	
+
 	#invalid host case
 	if host == "" or host == "NULL":
 		halt = True
@@ -54,7 +54,7 @@ def new_msg(word, word_eol, event, attrs):
 		if debug_output:
 			print("\00315Supressed invalid host name")
 		return hexchat.EAT_ALL
-		
+
 	#user never spoke before
 	if last_seen[host][1] == 0:
 		time_diff = time() - last_seen[host][0]
@@ -72,12 +72,12 @@ def new_msg(word, word_eol, event, attrs):
 		last_seen[host][0] = time()
 
 def filter_msg(word, word_eol, event, attrs):
-	
+
 	global halt
 	global last_seen
 	if halt == True:
 		return
-	
+
 	#filter join and part messages
 	user = hexchat.strip(word[0])
 	host = "NULL"
@@ -105,6 +105,8 @@ def filter_msg(word, word_eol, event, attrs):
 				halt = False
 			last_seen[host][2] = user
 			return hexchat.EAT_ALL
+		elif last_seen[host][0] + user_timeout > time():
+			last_seen[host][0] = time()
 	#Change username event
 	elif event == "Change Nick":
 		for idx, h in enumerate(last_seen):
@@ -120,6 +122,8 @@ def filter_msg(word, word_eol, event, attrs):
 		if host == "NULL" and debug_output:
 			print("\00315Error in Change Nick event: NULL host")
 		last_seen[host][2] = word[1]
+		if last_seen[host][0] + user_timeout > time():
+			last_seen[host][0] = time()
 	#find host
 	for idx, h in enumerate(last_seen):
 		if(last_seen[h][2] == user):
@@ -143,14 +147,14 @@ def filter_msg(word, word_eol, event, attrs):
 		return hexchat.EAT_ALL
 
 def toggle_debug_output(word, word_eol, userdata):
-	
+
 	global debug_output
 	text = "Debug output is now "
 	if debug_output:
 		text += "disabled."
 	else:
 		text += "enabled."
-	
+
 	debug_output = not debug_output
 	print(text)
 
@@ -165,4 +169,3 @@ for hook in hooks_filter:
 hexchat.hook_command("toggledebug", toggle_debug_output, help="/toggledebug shows or hides " + __module_name__ + " debug output")
 
 print("\00304" + __module_name__ + " successfully loaded.\003")
-
