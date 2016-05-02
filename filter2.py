@@ -1,9 +1,10 @@
 __module_name__ = 'Filter2'
-__module_version__ = '3.0'
+__module_version__ = '3.1'
 __module_description__ = 'Filters join/part messages by hosts'
 
 import hexchat
-import urllib2
+#with python 3 replace urllib2
+import urllib.request
 import json
 from time import time
 
@@ -62,8 +63,8 @@ def new_msg(word, word_eol, event, attrs):
 		time_diff = time() - last_seen[host][0]
 		
 		#get geoip
-		#Python2 only code, replace with import urllib.request urllib.request.urlopen("http://example.com/foo/bar").read()
-		data = json.loads(urllib2.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
+		#Python3, urllib2.request.urlopen("http://example.com/foo/bar").read()
+		data = json.loads(urllib.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
 		geoip = data["region_name"] + ", " + data["country_name"]
 		
 		if user == last_seen[host][2]:
