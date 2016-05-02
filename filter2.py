@@ -3,6 +3,8 @@ __module_version__ = '2.8'
 __module_description__ = 'Filters join/part messages by hosts'
 
 import hexchat
+import urllib2
+import json
 from time import time
 
 last_seen = {}	# List where key is host
@@ -58,10 +60,16 @@ def new_msg(word, word_eol, event, attrs):
 	#user never spoke before
 	if last_seen[host][1] == 0:
 		time_diff = time() - last_seen[host][0]
+		
+		#get geoip
+		#Python2 only code, replace with import urllib.request urllib.request.urlopen("http://example.com/foo/bar").read()
+		data = json.loads(urllib2.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
+		geoip = data["region_name"] + ", " + data["country_name"]
+		
 		if user == last_seen[host][2]:
-			word[1] += " \00307(logged in %s ago from \00302%s\00307)" % (human_readable(time_diff),host)
+			word[1] += " \00307(logged in %s ago from \00302%s\00307)" % (human_readable(time_diff),host,geoip)
 		else:
-			word[1] += " \00307(logged in %s ago. Formerly \00302%s\00307 from \00302%s\00307)" % (human_readable(time_diff),last_seen[host][2],host) #added host for debug purposes
+			word[1] += " \00307(logged in %s ago. Formerly \00302%s\00307 from \00302%s\00307)" % (human_readable(time_diff),last_seen[host][2],host,geoip) #added host for debug purposes
 			last_seen[host][2] = user
 		halt = True
 		hexchat.emit_print(event, *word)
