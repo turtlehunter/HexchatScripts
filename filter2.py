@@ -63,8 +63,8 @@ def new_msg(word, word_eol, event, attrs):
 		time_diff = time() - last_seen[host][0]
 		
 		#get geoip
-		#Python3, urllib2.request.urlopen("http://example.com/foo/bar").read()
-		data = json.loads(urllib.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
+		#Python3, urllib2.urlopen("http://example.com/foo/bar").read()
+		data = json.loads(urllib.request.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
 		geoip = data["region_name"] + ", " + data["country_name"]
 		
 		if user == last_seen[host][2]:
