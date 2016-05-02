@@ -64,13 +64,13 @@ def new_msg(word, word_eol, event, attrs):
 		
 		#get geoip
 		#Python3, urllib2.urlopen("http://example.com/foo/bar").read()
-		data = json.loads(urllib.request.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read())
+		data = json.loads(urllib.request.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read().decode("utf-8"))
 		geoip = data["region_name"] + ", " + data["country_name"]
-		
+
 		if user == last_seen[host][2]:
-			word[1] += " \00307(logged in %s ago from \00302%s\00307)" % (human_readable(time_diff),host,geoip)
+			word[1] += " \00307(logged in %s ago from \00302%s %s\00307)" % (human_readable(time_diff),host,geoip)
 		else:
-			word[1] += " \00307(logged in %s ago. Formerly \00302%s\00307 from \00302%s\00307)" % (human_readable(time_diff),last_seen[host][2],host,geoip) #added host for debug purposes
+			word[1] += " \00307(logged in %s ago. Formerly \00302%s\00307 from \00302%s %s\00307)" % (human_readable(time_diff),last_seen[host][2],host,geoip) #added host for debug purposes
 			last_seen[host][2] = user
 		halt = True
 		hexchat.emit_print(event, *word)
