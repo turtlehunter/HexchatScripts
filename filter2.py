@@ -1,5 +1,5 @@
 __module_name__ = 'Filter2'
-__module_version__ = '3.1'
+__module_version__ = '3.2'
 __module_description__ = 'Filters join/part messages by hosts'
 
 import hexchat
@@ -64,8 +64,11 @@ def new_msg(word, word_eol, event, attrs):
 		
 		#get geoip
 		#Python3, urllib2.urlopen("http://example.com/foo/bar").read()
-		data = json.loads(urllib.request.urlopen("http://freegeoip.net/json/" + host.split('@')[1]).read().decode("utf-8"))
-		geoip = data["region_name"] + ", " + data["country_name"]
+		try:
+			data = json.loads(urllib.request.urlopen("https://freegeoip.net/json/" + host.split('@')[1]).read().decode("utf-8"))
+			geoip = data["region_name"] + ", " + data["country_name"]
+		except:
+			geoip = ""
 
 		if user == last_seen[host][2]:
 			word[1] += " \00307(logged in %s ago from \00302%s %s\00307)" % (human_readable(time_diff),host,geoip)
