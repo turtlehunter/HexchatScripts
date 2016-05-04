@@ -4,7 +4,8 @@ __module_description__ = 'Filters join/part messages by hosts'
 
 import hexchat
 #with python 3 replace urllib2
-import urllib.request
+#import urllib.request
+import requests
 import json
 from time import time
 
@@ -65,7 +66,8 @@ def new_msg(word, word_eol, event, attrs):
 		#get geoip
 		#Python3, urllib2.urlopen("http://example.com/foo/bar").read()
 		try:
-			data = json.loads(urllib.request.urlopen("https://freegeoip.net/json/" + host.split('@')[1]).read().decode("utf-8"))
+			#data = json.loads(urllib.request.urlopen("https://freegeoip.net/json/" + host.split('@')[1]).read().decode("utf-8"))
+			data = requests.get("https://freegeoip.net/json/" + host.split('@')[1]).json()
 			geoip = data["region_name"] + ", " + data["country_name"]
 		except:
 			geoip = ""
